@@ -1,6 +1,6 @@
 import { Metadata } from 'next/types'
 
-import { getBlogPost } from '@/lib/mdx'
+import { getBlogPost, listBlogPosts } from '@/lib/mdx'
 
 type BlogPageProps = {
   params: Promise<{ slug: string }>
@@ -50,9 +50,12 @@ export default async function BlogPage({ params }: BlogPageProps) {
   )
 }
 
-export function generateStaticParams() {
-  // A list of params, which we will update shortly to use the file system.
-  return [{ slug: 'markdown-test' }, { slug: 'another-post' }]
+export async function generateStaticParams() {
+  const blogPosts = await listBlogPosts()
+  const blogStaticParams = blogPosts.map((post) => ({
+    slug: post.slug,
+  }))
+  return blogStaticParams
 }
 
 export const dynamicParams = false
