@@ -31,7 +31,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
             <div className='flex items-center gap-2 py-2'>
               <span className='text-sm'>{formattedDate}</span>|
               <div className='flex gap-1'>
-                {tags.map((tag) => (
+                {tags.map((tag: string) => (
                   <span
                     key={tag}
                     className='border-foreground rounded-full border px-2 py-1 text-xs'

@@ -1,7 +1,6 @@
+import { Metadata } from 'next'
 import fs from 'node:fs/promises'
 import path from 'node:path'
-
-import type { Metadata } from 'next/types'
 
 export type BlogPostMetadata = Metadata & {
   title: string
@@ -59,4 +58,32 @@ export const listBlogPosts = async (): Promise<
       }
     }),
   )
+}
+
+type MDXContent = string | null;
+
+const mdxContentMap: Record<string, string> = {
+  'hemforsakring': `
+# Hemförsäkring
+
+En hemförsäkring är grundskyddet för dig och ditt hem. Den täcker bland annat stöld och skadegörelse, brand-, vatten- och naturskador.
+
+## Vad ingår?
+
+* Egendomsskydd
+* Reseskydd
+* Ansvarsförsäkring
+* Rättsskydd
+* Överfallsskydd
+  `,
+  // Add more MDX content for other insurance types
+};
+
+export async function getMdxBySlug(slug: string): Promise<MDXContent> {
+  // Simulate async operation
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mdxContentMap[slug] || null);
+    }, 100);
+  });
 }

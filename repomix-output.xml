@@ -1,0 +1,1141 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+<additional_info>
+
+</additional_info>
+
+</file_summary>
+
+<directory_structure>
+public/
+  file.svg
+  globe.svg
+  next.svg
+  vercel.svg
+  window.svg
+src/
+  app/
+    [slug]/
+      page.tsx
+    blogs/
+      [slug]/
+        page.tsx
+    globals.css
+    home.mdx
+    layout.tsx
+    page.tsx
+  blogs/
+    another-post.mdx
+    markdown-test.mdx
+  components/
+    cookie-banner.tsx
+    footer.tsx
+    header.tsx
+    hero-section.tsx
+    insurance-card.tsx
+    MDXContent.tsx
+  lib/
+    insurance.ts
+    mdx.ts
+  types/
+    insurance.ts
+.gitignore
+.prettierrc.json
+eslint.config.mjs
+mdx-components.tsx
+next.config.ts
+package.json
+postcss.config.mjs
+README.md
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/app/[slug]/page.tsx">
+import { getAllInsuranceSlugs, getInsuranceBySlug } from '../../lib/insurance';
+import { getMdxBySlug } from '../../lib/mdx';
+import MDXContent from '../../components/MDXContent';
+
+interface Params {
+  slug: string;
+}
+
+interface PageProps {
+  params: Params;
+}
+
+export async function generateStaticParams() {
+  const slugs = getAllInsuranceSlugs();
+  return slugs.map((slug: string) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const insurance = getInsuranceBySlug(params.slug);
+  return {
+    title: `${insurance.title} - Billiga Försäkringar`,
+    description: insurance.metaDescription || insurance.description,
+    keywords: insurance.keywords?.join(', ')
+  };
+}
+
+export default async function InsurancePage({ params }: PageProps) {
+  const insurance = getInsuranceBySlug(params.slug);
+  const mdxContent = await getMdxBySlug(params.slug);
+  
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">{insurance.title}</h1>
+        
+        {mdxContent ? (
+          <MDXContent source={mdxContent} />
+        ) : (
+          <div className="prose max-w-none">
+            <p className="text-lg mb-4">{insurance.description}</p>
+            {/* Fallback content if no MDX is available */}
+            <p>Vi hjälper dig att hitta den bästa {insurance.title.toLowerCase()} som passar dina behov och din budget.</p>
+            
+            <h2 className="text-2xl font-semibold mt-8 mb-4">Varför behöver du {insurance.title.toLowerCase()}?</h2>
+            <p>En bra försäkring ger dig trygghet och skydd när olyckan är framme. Med rätt försäkring kan du känna dig säker på att du får den hjälp du behöver.</p>
+            
+            <h2 className="text-2xl font-semibold mt-8 mb-4">Vad ingår i en {insurance.title.toLowerCase()}?</h2>
+            <ul className="list-disc pl-5 space-y-2">
+              {insurance.features?.map((feature: string, index: number) => (
+                <li key={index}>{feature}</li>
+              ))}
+            </ul>
+            
+            <div className="bg-blue-50 p-6 rounded-lg mt-8">
+              <h3 className="text-xl font-semibold mb-3">Jämför {insurance.title.toLowerCase()}</h3>
+              <p>Fyll i formuläret nedan för att jämföra priser från ledande försäkringsbolag.</p>
+              <button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+                Jämför nu
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/cookie-banner.tsx">
+"use client"
+import { useState, useEffect } from 'react';
+export default function CookieBanner() {
+  const [showBanner, setShowBanner] = useState(false);
+  
+  useEffect(() => {
+    const hasAcceptedCookies = localStorage.getItem('cookiesAccepted');
+    if (!hasAcceptedCookies) {
+      setShowBanner(true);
+    }
+  }, []);
+  
+  const acceptCookies = () => {
+    localStorage.setItem('cookiesAccepted', 'true');
+    setShowBanner(false);
+  };
+  
+  if (!showBanner) return null;
+  
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-4 shadow-md z-50">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+        <div className="mb-4 md:mb-0 md:mr-4">
+          <p>
+            Den här webbplatsen använder sig av cookies för att erbjuda den bästa användarupplevelsen.{' '}
+            <a href="/sakerhetspolicy" className="text-blue-300 hover:underline">
+              Läs mer
+            </a>
+          </p>
+        </div>
+        <div className="flex space-x-4">
+          <button onClick={acceptCookies} className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded">
+            Stäng rutan
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/footer.tsx">
+// components/Footer.tsx
+import Link from 'next/link';
+
+export default function Footer() {
+  return (
+    <footer className="bg-gray-800 text-white">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Billiga-forsakringar.nu</h3>
+            <p className="text-gray-300">Vi hjälper dig att hitta och jämföra de bästa försäkringarna till bästa pris.</p>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Försäkringstyper</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/bilforsakring" className="text-gray-300 hover:text-white">
+                  Bilförsäkring
+                </Link>
+              </li>
+              <li>
+                <Link href="/hemforsakring" className="text-gray-300 hover:text-white">
+                  Hemförsäkring
+                </Link>
+              </li>
+              <li>
+                <Link href="/djurforsakringar" className="text-gray-300 hover:text-white">
+                  Djurförsäkring
+                </Link>
+              </li>
+              <li>
+                <Link href="/reseforsakring" className="text-gray-300 hover:text-white">
+                  Reseförsäkring
+                </Link>
+              </li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Om oss</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/om-billiga-forsakringar" className="text-gray-300 hover:text-white">
+                  Om oss
+                </Link>
+              </li>
+              <li>
+                <Link href="/kontakta-oss" className="text-gray-300 hover:text-white">
+                  Kontakta oss
+                </Link>
+              </li>
+              <li>
+                <Link href="/anvandarvillkor" className="text-gray-300 hover:text-white">
+                  Användarvillkor
+                </Link>
+              </li>
+              <li>
+                <Link href="/sakerhetspolicy" className="text-gray-300 hover:text-white">
+                  Säkerhetspolicy
+                </Link>
+              </li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Kontakt</h3>
+            <p className="text-gray-300">E-post: info@billiga-forsakringar.nu</p>
+            <div className="flex space-x-4 mt-4">
+              <a href="#" className="text-gray-300 hover:text-white" aria-label="Facebook">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
+                </svg>
+              </a>
+              <a href="#" className="text-gray-300 hover:text-white" aria-label="Twitter">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                </svg>
+              </a>
+              <a href="#" className="text-gray-300 hover:text-white" aria-label="Instagram">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+          <p>© {new Date().getFullYear()} Billiga-forsakringar.nu. Alla rättigheter förbehållna.</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+</file>
+
+<file path="src/components/header.tsx">
+'use client';
+
+import Link from 'next/link';
+import { useState } from 'react';
+
+export default function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  return (
+    <header className="bg-blue-50 shadow-sm">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center py-4">
+          <Link href="/" className="text-2xl font-bold text-blue-900">
+            Billiga-forsakringar.nu
+          </Link>
+          
+          <div className="hidden md:flex space-x-6">
+            <Link href="/bilforsakring" className="text-gray-700 hover:text-blue-600">
+              Bilförsäkring
+            </Link>
+            <Link href="/hemforsakring" className="text-gray-700 hover:text-blue-600">
+              Hemförsäkring
+            </Link>
+            <Link href="/djurforsakringar" className="text-gray-700 hover:text-blue-600">
+              Djurförsäkring
+            </Link>
+            <Link href="/reseforsakring" className="text-gray-700 hover:text-blue-600">
+              Reseförsäkring
+            </Link>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            <button className="p-2" aria-label="Sök">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            
+            <button 
+              className="md:hidden p-2"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Meny"
+              aria-expanded={isMenuOpen}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        {/* Mobile menu */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4">
+            <div className="flex flex-col space-y-3">
+              <Link href="/bilforsakring" className="text-gray-700 hover:text-blue-600 py-2">
+                Bilförsäkring
+              </Link>
+              <Link href="/hemforsakring" className="text-gray-700 hover:text-blue-600 py-2">
+                Hemförsäkring
+              </Link>
+              <Link href="/djurforsakringar" className="text-gray-700 hover:text-blue-600 py-2">
+                Djurförsäkring
+              </Link>
+              <Link href="/reseforsakring" className="text-gray-700 hover:text-blue-600 py-2">
+                Reseförsäkring
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}
+</file>
+
+<file path="src/components/hero-section.tsx">
+export default function HeroSection() {
+    return (
+      <div className="bg-blue-100 rounded-lg overflow-hidden mt-8">
+        <div className="py-12 px-6 md:px-12 lg:flex lg:items-center">
+          <div className="lg:w-1/2 mb-8 lg:mb-0">
+            <h1 className="text-3xl md:text-4xl font-bold text-blue-900 mb-4">
+              Hitta en billig försäkring och får rätt skydd vid skada
+            </h1>
+            <p className="text-lg text-gray-700 mb-6">
+              Vi tipsar dig om billiga försäkringar och vad du kan göra för att hitta en bra försäkring utifrån dina behov till ett bra pris.
+            </p>
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="font-bold text-gray-800 mb-3">Jämför försäkringar</h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <button className="bg-blue-100 hover:bg-blue-200 py-3 px-4 rounded text-blue-900">
+                  Bilförsäkring
+                </button>
+                <button className="bg-blue-100 hover:bg-blue-200 py-3 px-4 rounded text-blue-900">
+                  Hemförsäkring
+                </button>
+                <button className="bg-blue-100 hover:bg-blue-200 py-3 px-4 rounded text-blue-900">
+                  Djurförsäkring
+                </button>
+                <button className="bg-blue-100 hover:bg-blue-200 py-3 px-4 rounded text-blue-900">
+                  Reseförsäkring
+                </button>
+              </div>
+              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded">
+                Jämför alla försäkringar
+              </button>
+            </div>
+          </div>
+          <div className="lg:w-1/2 lg:pl-12">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-center justify-center">
+                <div className="rounded-full bg-blue-600 text-white font-bold text-lg w-12 h-12 flex items-center justify-center">
+                  Z
+                </div>
+                <div className="ml-4">
+                  <h3 className="font-bold text-xl">ZMARTA</h3>
+                  <p className="text-gray-600">Jämför försäkringar</p>
+                </div>
+              </div>
+              <p className="my-4 text-gray-700">
+                Gör som hundratusentals andra svenskar, jämför och byt bilförsäkring hos Zmarta.se. Helt kostnadsfritt kan du jämföra försäkringar och få erbjudanden från välkända försäkringsbolag.
+              </p>
+              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded">
+                Till Zmarta.se
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+</file>
+
+<file path="src/components/insurance-card.tsx">
+import Link from 'next/link';
+
+export default function InsuranceCard({ title, description, icon, slug }: { title: string, description: string, icon: string, slug: string }) {
+  return (
+    <Link href={`/${slug}`}>
+      <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition duration-300">
+        <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mb-4">
+          {icon ? (
+            <span dangerouslySetInnerHTML={{ __html: icon }} />
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          )}
+        </div>
+        <h3 className="font-bold text-xl mb-2">{title}</h3>
+        <p className="text-gray-600">{description}</p>
+      </div>
+    </Link>
+  );
+}
+</file>
+
+<file path="src/components/MDXContent.tsx">
+import React from 'react';
+
+interface MDXContentProps {
+  source: string;
+}
+
+export default function MDXContent({ source }: MDXContentProps) {
+  // In a real app, you would use a library like next-mdx-remote to render MDX
+  // This is a simplified implementation that converts MDX to basic HTML
+  
+  const htmlContent = convertMdxToHtml(source);
+  
+  return (
+    <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+  );
+}
+
+function convertMdxToHtml(mdx: string): string {
+  // This is a very simplified conversion
+  // In a real app, use proper MDX parsing and rendering
+  
+  let html = mdx
+    // Convert headers
+    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+    // Convert paragraphs
+    .replace(/^(?!<h|<ul|<li|\*)(.*$)/gm, '<p>$1</p>')
+    // Convert list items
+    .replace(/^\* (.*$)/gm, '<li>$1</li>');
+  
+  // Wrap list items in ul tags
+  const listItemRegex = /<li>.*<\/li>/g;
+  if (html.match(listItemRegex)) {
+    html = html.replace(
+      /((<li>.*<\/li>\n)+)/g, 
+      '<ul>\n$1</ul>\n'
+    );
+  }
+  
+  return html;
+}
+</file>
+
+<file path="src/lib/insurance.ts">
+import { Insurance } from '../types/insurance';
+
+// Mock data for demonstration
+const insuranceData: Insurance[] = [
+  {
+    slug: 'hemforsakring',
+    title: 'Hemförsäkring',
+    description: 'Skydda ditt hem och dina tillhörigheter med en hemförsäkring.',
+    metaDescription: 'Jämför hemförsäkringar och hitta det bästa skyddet för ditt hem.',
+    keywords: ['hem', 'försäkring', 'hemförsäkring', 'bostad'],
+    features: [
+      'Skydd vid inbrott',
+      'Skydd vid brand',
+      'Ansvarsförsäkring',
+      'Rättsskydd',
+      'Reseskydd'
+    ]
+  },
+  {
+    slug: 'bilforsakring',
+    title: 'Bilförsäkring',
+    description: 'Hitta den bilförsäkring som passar dina behov och din budget.',
+    keywords: ['bil', 'försäkring', 'bilförsäkring', 'fordon'],
+    features: [
+      'Trafikförsäkring',
+      'Halvförsäkring',
+      'Helförsäkring',
+      'Assistans vid olycka',
+      'Maskinskadeskydd'
+    ]
+  },
+  // Add more insurance types as needed
+];
+
+export function getAllInsuranceSlugs(): string[] {
+  return insuranceData.map(insurance => insurance.slug);
+}
+
+export function getInsuranceBySlug(slug: string): Insurance {
+  const insurance = insuranceData.find(item => item.slug === slug);
+
+  if (!insurance) {
+    throw new Error(`Insurance with slug "${slug}" not found`);
+  }
+
+  return insurance;
+}
+</file>
+
+<file path="src/types/insurance.ts">
+export interface Insurance {
+  slug: string;
+  title: string;
+  description: string;
+  metaDescription?: string;
+  keywords?: string[];
+  features?: string[];
+}
+</file>
+
+<file path="public/file.svg">
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+</file>
+
+<file path="public/globe.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+</file>
+
+<file path="public/next.svg">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+</file>
+
+<file path="public/vercel.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+</file>
+
+<file path="public/window.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
+
+<file path="src/app/home.mdx">
+# Getting started with Next.js and MDX
+
+This is a simple site made with Next.js demonstrating writing content using MDX.
+
+You can check out the other pages:
+
+- [A page testing markdown formatting](/blogs/markdown-test)
+- [Just another test page](/blogs/another-post)
+</file>
+
+<file path="src/blogs/another-post.mdx">
+export const metadata = {
+  title: 'Another test post',
+  description: 'Demonstrating multiple posts',
+  date: '2025-03-18T12:00:00Z',
+  tags: ['writing'],
+}
+
+## Introduction
+
+Hello!
+</file>
+
+<file path="src/blogs/markdown-test.mdx">
+export const metadata = {
+  title: 'A test post',
+  description: 'A post to test various markdown formatting',
+  date: '2025-03-17T12:00:00Z',
+  tags: ['Next.js', 'MDX', 'Typescript'],
+}
+
+## Heading 2
+
+### Heading 3
+
+#### Heading 4
+
+A paragraph with some _emphasized_, **bolded**, and <s>strikethrough</s> text.
+
+Unordered lists
+
+- first
+  - second
+- third
+
+Ordered lists
+
+1. first
+   1. second
+2. third
+
+> A quote!
+
+[link to google](https://google.com)
+</file>
+
+<file path="src/lib/mdx.ts">
+import { Metadata } from 'next'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+
+export type BlogPostMetadata = Metadata & {
+  title: string
+  description: string
+  date: Date
+  tags: string[]
+}
+
+export type BlogPostData = {
+  slug: string
+  metadata: BlogPostMetadata
+  component: React.FC
+}
+
+export const getBlogPost = async (slug: string): Promise<BlogPostData> => {
+  const post = await import(`@/blogs/${slug}.mdx`)
+  const data = post.metadata
+
+  if (!data.title || !data.description) {
+    throw new Error(`Missing some required metadata fields in: ${slug}`)
+  }
+
+  const metadata: BlogPostMetadata = {
+    ...data,
+    date: new Date(data.date),
+    updatedDate: data.updatedDate ? new Date(data.updatedDate) : undefined,
+  }
+
+  return {
+    slug,
+    metadata,
+    component: post.default,
+  }
+}
+
+export const getBlogPostMetadata = async (
+  slug: string,
+): Promise<BlogPostMetadata> => {
+  const post = await getBlogPost(slug)
+  return post.metadata
+}
+
+export const listBlogPosts = async (): Promise<
+  Omit<BlogPostData, 'component'>[]
+> => {
+  const files = await fs.readdir(path.join(process.cwd(), 'src/blogs'))
+
+  return Promise.all(
+    files.map(async (file) => {
+      const slug = file.replace(/\.mdx$/, '')
+      const { metadata } = await getBlogPost(slug)
+      return {
+        slug,
+        metadata,
+      }
+    }),
+  )
+}
+
+type MDXContent = string | null;
+
+const mdxContentMap: Record<string, string> = {
+  'hemforsakring': `
+# Hemförsäkring
+
+En hemförsäkring är grundskyddet för dig och ditt hem. Den täcker bland annat stöld och skadegörelse, brand-, vatten- och naturskador.
+
+## Vad ingår?
+
+* Egendomsskydd
+* Reseskydd
+* Ansvarsförsäkring
+* Rättsskydd
+* Överfallsskydd
+  `,
+  // Add more MDX content for other insurance types
+};
+
+export async function getMdxBySlug(slug: string): Promise<MDXContent> {
+  // Simulate async operation
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mdxContentMap[slug] || null);
+    }, 100);
+  });
+}
+</file>
+
+<file path=".gitignore">
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+</file>
+
+<file path=".prettierrc.json">
+{
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "semi": false,
+  "trailingComma": "all"
+}
+</file>
+
+<file path="mdx-components.tsx">
+import type { MDXComponents } from 'mdx/types'
+
+export function useMDXComponents(components: MDXComponents): MDXComponents {
+  return { ...components }
+}
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+</file>
+
+<file path="src/app/blogs/[slug]/page.tsx">
+import { Metadata } from 'next/types'
+
+import { getBlogPost, listBlogPosts } from '@/lib/mdx'
+
+type BlogPageProps = {
+  params: Promise<{ slug: string }>
+}
+
+export default async function BlogPage({ params }: BlogPageProps) {
+  const { slug } = await params
+  const { metadata, component: MDXContent } = await getBlogPost(slug)
+
+  const title = metadata.title
+  const date = new Date(metadata.date)
+  const tags = metadata.tags
+
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date)
+
+  return (
+    <div className='flex flex-col items-center gap-6 py-6'>
+      {/* some wrappers for styling and additional content*/}
+      <div className='mx-auto w-full max-w-[768px]'>
+        <article className='prose w-full p-6'>
+          {/* A title section using the markdown metadata */}
+          <div className='mt-6 mb-8'>
+            <h1 className='mb-2 text-4xl font-bold'>{title}</h1>
+            <div className='flex items-center gap-2 py-2'>
+              <span className='text-sm'>{formattedDate}</span>|
+              <div className='flex gap-1'>
+                {tags.map((tag: string) => (
+                  <span
+                    key={tag}
+                    className='border-foreground rounded-full border px-2 py-1 text-xs'
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* The markdown content */}
+          <MDXContent />
+        </article>
+      </div>
+    </div>
+  )
+}
+
+export async function generateStaticParams() {
+  const blogPosts = await listBlogPosts()
+  const blogStaticParams = blogPosts.map((post) => ({
+    slug: post.slug,
+  }))
+  return blogStaticParams
+}
+
+export const dynamicParams = false
+
+export async function generateMetadata({
+  params,
+}: BlogPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const { metadata } = await getBlogPost(slug)
+
+  return {
+    title: metadata.title,
+    description: metadata.description,
+    keywords: metadata.tags,
+    // other...
+  }
+}
+</file>
+
+<file path="src/app/globals.css">
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  --primary: var(--color-blue-800);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --color-primary: var(--primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+
+    --primary: var(--color-blue-300);
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Overrides for Tailwind Typography */
+article.prose,
+div.prose {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--primary);
+  --tw-prose-lead: var(--foreground);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-counters: var(--primary);
+  --tw-prose-bullets: var(--primary);
+  --tw-prose-hr: var(--foreground);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--foreground);
+  --tw-prose-captions: var(--foreground);
+  --tw-prose-kbd: var(--foreground);
+  --tw-prose-code: var(--foreground);
+  --tw-prose-pre-code: var(--foreground);
+  --tw-prose-th-borders: var(--foreground);
+  --tw-prose-td-borders: var(--foreground);
+}
+</file>
+
+<file path="src/app/layout.tsx">
+import { Geist, Geist_Mono } from 'next/font/google'
+import './globals.css'
+import { Metadata } from 'next'
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
+
+export const metadata: Metadata = {
+  title: 'Next + MDX Blog Starter',
+  description:
+    'A sample Next.js site demonstrating writing blog content using MDX',
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang='en'>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {children}
+      </body>
+    </html>
+  )
+}
+</file>
+
+<file path="src/app/page.tsx">
+import HomeContent from './home.mdx'
+
+export default function Home() {
+  return (
+    <div className='flex flex-col items-center gap-6 py-6'>
+      {/* some wrappers for styling and additional content*/}
+      <div className='prose mx-auto w-full max-w-[768px]'>
+        <HomeContent />
+      </div>
+    </div>
+  )
+}
+</file>
+
+<file path="eslint.config.mjs">
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { FlatCompat } from '@eslint/eslintrc'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+})
+
+const eslintConfig = [
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+]
+
+export default eslintConfig
+</file>
+
+<file path="next.config.ts">
+import { NextConfig } from 'next'
+import createMDX from '@next/mdx'
+
+const nextConfig: NextConfig = {
+  // Configure `pageExtensions` to include markdown and MDX files
+  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+}
+
+const withMDX = createMDX({
+  extension: /\.mdx?$/,
+})
+
+// Merge MDX config with Next.js config
+export default withMDX(nextConfig)
+</file>
+
+<file path="package.json">
+{
+  "name": "next-mdx-starter",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:turbo": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint --fix",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@mdx-js/loader": "^3.1.0",
+    "@mdx-js/react": "^3.1.0",
+    "@next/mdx": "^15.2.2",
+    "@types/mdx": "^2.0.13",
+    "next": "15.2.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/next": "^8.0.7",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.2",
+    "eslint-plugin-prettier": "^5.2.3",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
+</file>
+
+<file path="postcss.config.mjs">
+const config = {
+  plugins: ['@tailwindcss/postcss'],
+}
+
+export default config
+</file>
+
+<file path="README.md">
+# Getting started with Next.js and MDX
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+</file>
+
+</files>

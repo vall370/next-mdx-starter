@@ -1,6 +1,10 @@
-import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
+import { Metadata } from 'next'
+import { siteConfig } from '@/config/site'
+import Header from '@/components/header'
+import Footer from '@/components/footer'
+import CookieBanner from '@/components/cookie-banner'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -13,9 +17,11 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Next + MDX Blog Starter',
-  description:
-    'A sample Next.js site demonstrating writing blog content using MDX',
+  title: {
+    default: siteConfig.defaultTitle,
+    template: siteConfig.titleTemplate,
+  },
+  description: siteConfig.defaultDescription,
 }
 
 export default function RootLayout({
@@ -28,7 +34,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Header />
+        <main className="min-h-screen">
+          {children}
+        </main>
+        <Footer />
+        <CookieBanner />
       </body>
     </html>
   )

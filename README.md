@@ -1,38 +1,115 @@
-# Getting started with Next.js and MDX
+# Next.js Content Boilerplate
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a flexible boilerplate for creating content-driven websites using Next.js. It includes a configurable theme system, modular components, and content management through MDX or a configurable data structure.
 
 ## Getting Started
 
-First, run the development server:
+1. Clone this repository
+2. Install dependencies: `npm install`
+3. Start the development server: `npm run dev`
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Customization Guide
+
+### Site Configuration
+
+Edit the `src/config/site.ts` file to customize:
+
+- Site name, description, and metadata
+- Navigation links
+- Footer columns and links
+- Contact information
+- Theme colors
+
+### Content Configuration
+
+Edit the `src/config/content.ts` file to:
+
+- Define content items for your site
+- Configure features and metadata
+- Set up default fallback content templates
+
+### Theming
+
+The project includes a theme system in `src/styles/theme.ts` that maps theme names to Tailwind classes. You can:
+
+1. Change the primary theme color in `site.ts`
+2. Add new theme color schemes in `theme.ts`
+3. Customize the CSS variables in `globals.css`
+
+### Components
+
+The main components are:
+
+- `Header` - Site navigation
+- `Footer` - Site footer with configurable columns
+- `HeroSection` - Customizable hero area
+- `MDXContent` - Renders MDX content
+
+### Adding Pages
+
+1. Create MDX files in `src/blogs/` folder
+2. Add content items in `src/config/content.ts`
+3. The dynamic routes will automatically generate pages for your content
+
+## Project Structure
+
+```
+src/
+├── app/                  # Next.js app router
+│   ├── [slug]/           # Dynamic pages based on content
+│   ├── blogs/            # Blog pages
+│   └── layout.tsx        # Root layout
+├── components/           # Reusable UI components
+├── config/               # Site configuration
+│   ├── site.ts           # Main site settings
+│   └── content.ts        # Content items configuration
+├── lib/                  # Utility functions
+├── styles/               # Theme and styling utilities
+└── types/                # TypeScript type definitions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Adding New Content Types
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To add a new content type:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Add items to the `contentConfig.items` object in `src/config/content.ts`
+2. Create a new dynamic route in `src/app/[your-content-type]/[slug]/page.tsx`
+3. Update item fetching functions to fetch your new content type
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+Deploy your customized site to Vercel:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/yourusername/nextjs-content-boilerplate)
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is MIT licensed.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## SEO Features
+
+### Automatic Sitemap Generation
+
+The boilerplate automatically generates a sitemap.xml file during the build process. The sitemap includes:
+
+- All dynamic content pages (insurance pages, blog posts, etc.)
+- Static pages
+- Each URL includes lastModified, changeFrequency, and priority information
+
+The sitemap is accessible at `/sitemap.xml`
+
+### Robots.txt
+
+A robots.txt file is automatically generated to allow search engines to discover your sitemap.
+
+### How to Customize
+
+To customize the sitemap generation:
+
+1. Edit `src/app/sitemap.ts` to include additional routes or change frequency/priority settings
+2. Make sure your `siteConfig.url` is set correctly in `src/config/site.ts`
